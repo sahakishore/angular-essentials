@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { TaskComponent } from "./task/task.component";
 import { NewTaskComponent } from "./new-task/new-task.component";
 import { type NewTaskData } from './task/task.model';
-
+import { TasksService } from './tasks.services';
 @Component({
   selector: 'app1-tasks',
   standalone: true,
@@ -20,40 +20,28 @@ export class TasksComponent {
 
   isAddingTask = false;
 
-  tasks = [
-    {
-      id: 't1',
-      userId: 'u1',
-      title: 'Master Angular',
-      summary:
-        'Learn all the basic and advanced features of Angular & how to apply them.',
-      dueDate: '2025-12-31',
-    },
-    {
-      id: 't2',
-      userId: 'u3',
-      title: 'Build first prototype',
-      summary: 'Build a first prototype of the online shop website',
-      dueDate: '2024-05-31',
-    },
-    {
-      id: 't3',
-      userId: 'u3',
-      title: 'Prepare issue template',
-      summary:
-        'Prepare and describe an issue template which will help with project management',
-      dueDate: '2024-06-15',
-    },
-  ];
+  //creating instance of TasksService class
+  // private tasksService = new TasksService();
+
+  // through dependency injection, we can inject the TasksService class into the constructor
+  private tasksService: TasksService;
+
+
+  // angular "Dependency Injection" to inject the TasksService class, we tell Angular which type of value we need and Angular creates it and provides it as an argument to the constructor
+  constructor(tasksService: TasksService){
+  // constructor(private tasksService: TasksService){ // typescript shortcut
+    this.tasksService = tasksService;
+  }
+
 
   get selectedUserTasks() {
-    return this.tasks.filter((task) => task.userId === this.userIdIncoming);
+    return this.tasksService.getUserTasks(this.userIdIncoming);
   }
 
-  onCompleteTask(taskId: string) {
-    console.log('Completed task with id: ' + taskId);
-    this.tasks = this.tasks.filter((task) => task.id !== taskId);
-  }
+  // onCompleteTask(taskId: string) {
+  //   console.log('Completed task with id: ' + taskId);
+  //   this.tasksService.removeTask(taskId);
+  // }
 
   // onAddTask() {
   //   this.tasks.push({
@@ -70,25 +58,26 @@ export class TasksComponent {
     this.isAddingTask = true;
   }
 
-  onCancelAddTask(){
+  // onCancelAddTask(){
+    onCloseAddTask(){
     console.log('Cancel button clicked');
     this.isAddingTask = false;
   }
 
-  onAddTask(taskData: NewTaskData) {
-    console.log('Task added');
-    console.log(taskData);
-    this.tasks.unshift({
-      id: new Date().toISOString(),
-      userId: this.userIdIncoming,
-      title: taskData.title,
-      summary: taskData.summary,
-      dueDate: taskData.date,
-    });
+  // onAddTask(taskData: NewTaskData) {
+  //   console.log('Task added');
+  //   console.log(taskData);
+  //   // this.tasks.unshift({
+  //   //   id: new Date().toISOString(),
+  //   //   userId: this.userIdIncoming,
+  //   //   title: taskData.title,
+  //   //   summary: taskData.summary,
+  //   //   dueDate: taskData.date,
+  //   // });
 
-    //close the form
+  //   //close the form
 
-    this.isAddingTask = false;
-  }
+  //   this.isAddingTask = false;
+  // }
 
 }
